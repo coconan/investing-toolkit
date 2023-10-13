@@ -69,14 +69,14 @@ object Main extends App {
             if (!success) {
                 println(cubeSymbol + ", " + name + ", " + "访问出错")
             } else {
-                println(responseJson(0)("symbol").str + ", " + responseJson(0)("name").str + ", " + profit)
+                println(cubeSymbol + ", " + name + ", " + profit)
             }
         } else {
             println(cubeSymbol + ", " + name + ", " + "已关停")
         }
     }
-    
-    for (serialNo <- 1000001 to 1001000) {
+
+    for (serialNo <- 1005282 to 1006000) {
         val cubeSymbol = "SP" + serialNo
         try {
             crawl(cubeSymbol)
