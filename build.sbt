@@ -29,7 +29,9 @@ libraryDependencies ++= Seq(
     "org.scala-lang.modules" %% "scala-parser-combinators" % "2.1.1",
     "com.softwaremill.sttp.client4" %% "core" % "4.0.0-M3",
     "org.scalactic" %% "scalactic" % "3.2.16",
-    "org.scalatest" %% "scalatest" % "3.2.16" % "test"
+    "org.scalatest" %% "scalatest" % "3.2.16" % "test",
+    "com.lihaoyi" %% "ujson" % "0.9.6",
+    "org.jsoup" % "jsoup" % "1.15.3"
 )
 
 // Here, `libraryDependencies` is a set of dependencies, and by using `+=`,
