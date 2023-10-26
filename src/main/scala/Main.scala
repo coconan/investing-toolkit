@@ -2,6 +2,8 @@ import scala.util.{Try, Success, Failure}
 import sttp.client4._
 import ujson.Obj
 import org.jsoup.Jsoup
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 object Main extends App {
     def getPage(cubeSymbol: String): Response[Either[String, String]] = {
@@ -22,10 +24,7 @@ object Main extends App {
         response
     }
 
-    def getAll(cubeSymbol: String): Response[Either[String, String]] = {
-        val since = 1689150944000L
-        val until = 1696926944000L
-        
+    def getAll(cubeSymbol: String, since: Long, until: Long): Response[Either[String, String]] = {
         val source = scala.io.Source.fromFile("target/cookie.txt")
         val cookieString = try source.mkString finally source.close()
         val cookies = cookieString
@@ -43,7 +42,7 @@ object Main extends App {
         response
     }
 
-    def crawl(cubeSymbol: String) = {
+    def crawl(cubeSymbol: String, since: Long, until: Long) = {
         val pageResponse = getPage(cubeSymbol)
         val pageResponseBodyString = pageResponse.body match {
             case Left(value) => value
@@ -55,7 +54,7 @@ object Main extends App {
 
         if (!isClosed) {
             val profit = doc.select("div.cube-profit-year span.per").text() + "%" 
-            val response = getAll(cubeSymbol)
+            val response = getAll(cubeSymbol, since, until)
 
             val responseBodyString = response.body match {
                 case Left(value) => throw new RuntimeException(value)
@@ -76,10 +75,12 @@ object Main extends App {
         }
     }
 
+    val since = LocalDateTime.now().minusYears(1).atZone(ZoneId.systemDefault()).toEpochSecond() * 1000
+    val until = LocalDateTime.now().atZone(ZoneId.systemDefault()).toEpochSecond() * 1000
     for (serialNo <- 1005282 to 1006000) {
         val cubeSymbol = "SP" + serialNo
         try {
-            crawl(cubeSymbol)
+            crawl(cubeSymbol, since, until)
         } catch {
             case e: SttpClientException.TimeoutException => println(cubeSymbol + ", " + "访问超时")
         }
